@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    
+    <flow name="exasure-eapi-main">
+        <http:listener config-ref="exasure-eapi-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="exasure-eapi-config" />
+		<error-handler ref="apikit-errors" />
+    </flow>
+    <flow name="get:\address\autocomplete:exasure-eapi-config">
+        <!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+[
+  {
+    addressLabel: "334 E 25th St",
+    streetNumber: "334",
+    streetName: "E 25th St",
+    city: "Paterson",
+    stateCode: "NJ",
+    postalCode: "07514",
+    county: "Passaic",
+    countryCode: "US",
+    formattedAddress: "334 E 25th St, Paterson, NJ 07514 US",
+    state: "New Jersey",
+    country: "United States",
+    countryFlag: "🇺🇸"
+  }
+&#93; as Array {encoding: "UTF-8", mediaType: "application/json"}&#93;&#93;></ee:set-payload>
+            </ee:message>
+        </ee:transform> [STUDIO] -->
+        <ee:transform doc:name="Transform Message" doc:id="d6bbbfa7-5b2f-49a0-ad71-52a66da03726">
+            <ee:message />
+            <ee:variables>
+                <ee:set-variable variableName="query"><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.query]]></ee:set-variable>
+                <ee:set-variable variableName="country"><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.country]]></ee:set-variable>
+                <ee:set-variable variableName="mailable"><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.mailable]]></ee:set-variable>
+				<ee:set-variable variableName="limit" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.limit]]></ee:set-variable>
+				<ee:set-variable variableName="near" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.near]]></ee:set-variable>
+				<ee:set-variable variableName="layers" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.layers]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="getAddressAutocompleteSubFlow" doc:id="46024be2-9897-4348-ba2a-e883ba3de979" name="getAddressAutocompleteSubFlow"/>
+        
+    </flow>
+</mule>
