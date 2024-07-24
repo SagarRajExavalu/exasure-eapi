@@ -1,36 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<mule
-	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
-	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
-	<http:listener-config
-		name="exasure-eapi-httpListenerConfig">
-		<http:listener-connection host="0.0.0.0"
-			port="${http.port}" readTimeout="${http.readTimeout}"/>
-	</http:listener-config>
-	<apikit:config name="exasure-eapi-config"
-		api="resource::afd79888-16c6-487f-8caa-338e9d8c3207:exasure-eapi:1.0.0:raml:zip:exasure-eapi.raml"
-		outboundHeadersMapName="outboundHeaders"
-		httpStatusVarName="httpStatus" />
-	<configuration-properties
-		doc:name="configuration-properties"
-		doc:id="39f41dd1-c1d4-4768-9cd1-eb5c3787294e"
-		file="properties\\${env}-config.yaml" />
-	<configuration doc:name="Configuration"
-		doc:id="764f9052-b7a5-44e6-b252-35029844ce30"
-		defaultErrorHandler-ref="apikit-errors" />
-	<secure-properties:config
-		name="Secure_Properties_Config" doc:name="Secure Properties Config"
-		doc:id="f403e9c6-95f2-46ad-b5d2-57b6d1e9f663"
-		file="secure\\properties\\${env}-secure-config.yaml"
-		key="${secureKey}" />
-	
-
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    <http:listener-config name="exasure-eapi-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" readTimeout="${http.readTimeout}" />
+    </http:listener-config>
+    <apikit:config name="exasure-eapi-config" api="resource::afd79888-16c6-487f-8caa-338e9d8c3207:exasure-eapi:1.0.2:raml:zip:exasure-eapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <configuration-properties doc:name="configuration-properties" doc:id="39f41dd1-c1d4-4768-9cd1-eb5c3787294e" file="properties\\${env}-config.yaml" />
+    <configuration doc:name="Configuration" doc:id="764f9052-b7a5-44e6-b252-35029844ce30" defaultErrorHandler-ref="apikit-errors" />
+    <secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="f403e9c6-95f2-46ad-b5d2-57b6d1e9f663" file="secure\\properties\\${env}-secure-config.yaml" key="${secureKey}" />
+	<api-gateway:autodiscovery apiId="${api.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="b42fb6b9-e7c6-469f-9a5c-ad19e8e702af" flowRef="exasure-eapi-main" />
 </mule>
