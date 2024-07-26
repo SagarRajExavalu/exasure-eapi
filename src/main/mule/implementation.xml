@@ -8,12 +8,12 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="getAddressAutocompleteSubFlow" doc:id="2f04f249-0c26-47cb-a394-14d168b15ab1" >
 		<logger level="INFO" doc:name="Logger" doc:id="17e308f9-c90b-4a89-b3cc-7c93539a8ce6" message="getAddressAutocompleteSubFlow started for transactionId: #[correlationId]"/>
-		<validation:is-not-blank-string doc:name="searchText Is Not Blank" doc:id="9bfc375f-5175-4e68-a850-020b5fc9d8ab" value="#[vars.searchText]" message="The required searchText params is blank">
+		<validation:is-not-blank-string doc:name="Search Text" doc:id="9bfc375f-5175-4e68-a850-020b5fc9d8ab" value="#[vars.searchText]" message="The required searchText params is blank">
 			<error-mapping sourceType="VALIDATION:BLANK_STRING" targetType="APP:IS_BLANK_STRING" />
 		</validation:is-not-blank-string>
 		<choice doc:name="Choice" doc:id="9c4bd880-4410-424d-9a86-5cf626c25487" >
 			<when expression="#[vars.countryCode != null]">
-				<validation:is-not-blank-string doc:name="Country Is Not Blank" doc:id="771e33a3-7b16-4346-b54d-7dea96c15003" value="#[vars.countryCode]" message="countryCode is blank string">
+				<validation:is-not-blank-string doc:name="Country" doc:id="771e33a3-7b16-4346-b54d-7dea96c15003" value="#[vars.countryCode]" message="countryCode is blank string">
 					<error-mapping sourceType="VALIDATION:BLANK_STRING" targetType="APP:IS_BLANK_STRING" />
 				</validation:is-not-blank-string>
 			</when>
@@ -39,7 +39,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	
 }]]]></http:query-params>
 		</http:request>
-		<ee:transform doc:name="Transform Message" doc:id="9b707df2-2e53-4fd3-8ce0-ffee63cab67a" >
+		<ee:transform doc:name="Response" doc:id="9b707df2-2e53-4fd3-8ce0-ffee63cab67a" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -48,5 +48,30 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="a7f33b7c-575d-42db-86a3-cef0093cca6f" message="getAddressAutocompleteSubFlow ended for transactionId: #[correlationId]"/>
+	</sub-flow>
+	<sub-flow name="postLicenseVerificationSubFlow" doc:id="85ffab0c-5a18-4fd0-96d6-0cd51d4488f1" >
+		<logger level="INFO" doc:name="Logger" doc:id="f7a4c932-30cc-41fa-a2a0-ce1998c33422" message="postLicenseVerificationSubFlow started for transactionId: #[correlationId]"/>
+		<validation:is-not-blank-string doc:name="License Number" doc:id="e2f9b71b-957c-4a04-a6fd-e69719b826d4" value="#[vars.initPayload.licenseNumber]" message="The required liscense number is blank">
+			<error-mapping sourceType="VALIDATION:BLANK_STRING" targetType="APP:IS_BLANK_STRING" />
+		</validation:is-not-blank-string>
+		<http:request method="POST" doc:name="POST License Verification" doc:id="fe75b96d-5c89-4d83-aff9-2a92f2a0bddb" url="${cloudhub.exasure-dmv-sapi.hostName}${cloudhub.exasure-dmv-sapi.path.postLicenseVerification}" sendCorrelationId="AUTO" correlationId="#[correlationId]">
+			<reconnect frequency="${reconnection.frequecy}" count="${reconnection.attempts}"/>
+			<http:body ><![CDATA[#[vars.initPayload]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('secure::exasure-dmv-sapi.client_secret'),
+	"client_id" : Mule::p('secure::exasure-dmv-sapi.client_id')
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="Response" doc:id="9e04eca0-ef91-4ec1-a6b9-81d21cf87773" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="720320c3-cfc8-4b81-a7d9-a58a6e75b180" message="postLicenseVerificationSubFlow ended for transactionId: #[correlationId]"/>
 	</sub-flow>
 </mule>

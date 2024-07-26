@@ -1,3 +1,6 @@
 exasure-address-sapi:
   client_id: "![C0LUXqGR8aHjgua5vSOEII0xKxWdfuVxkqAK2dzDUCyfi8ohmaXpUFNPAG/WsQQA]"
   client_secret: "![aFHo0/rMjOOHw8QLp1WeMBfOAjvZz4rwezEJSFznPNM2Mf6+TIVvljGtg4sNVf4h]"
+exasure-dmv-sapi:
+  client_id: "![a42KePKerbgiTlTW5X5Yebh12VptNnFlxhS83sgHXY8fvtje+7NbOW2I3CuJfi0v]"
+  client_secret: "![zp/Jc5gj82i4wA/Z1ImIkXN2x1gihvi8CNKnp76YVnMZaKTTPbQbheGSmT2cz2c1]"

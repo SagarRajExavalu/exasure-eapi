@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>afd79888-16c6-487f-8caa-338e9d8c3207</groupId>
 			<artifactId>exasure-eapi</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.4</version>
 			<classifier>raml</classifier>
 			<type>zip</type>
 		</dependency>
