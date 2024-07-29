@@ -48,33 +48,10 @@ attributes.queryParams.countryCode]]></ee:set-variable>
     <flow name="get:\vin-details\(vin-number):exasure-eapi-config">
         <ee:transform doc:name="Transform Message">
             <ee:variables>
-                <ee:set-variable variableName="vin-number">attributes.uriParams.'vin-number'</ee:set-variable>
+				<ee:set-variable variableName="vVin" ><![CDATA[attributes.uriParams.'vin-number']]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-[
-  {
-    bodyStyle: "SEDAN 4-DR",
-    engineDisplacement: "2.0L",
-    engineShape: "Inline",
-    engineType: "ELECTRIC",
-    fuelType: "ELECTRIC",
-    grossVehicleWeightRatingClass: "E",
-    make: "Tesla",
-    manufacturerCountry: "UNITED STATES",
-    model: "Model 3",
-    modelYear: "2024",
-    trimLevel: "Base",
-    VIN: "5YJ3E1EA9RF721552",
-    vehicleType: "MPV"
-  }
-] as Array {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="getVindetailsSubflow" doc:id="451fde44-f5f7-44db-9d26-07b89a759bf8" name="getVindetailsSubflow"/>
     </flow>
     <flow name="post:\license\verification:application\json:exasure-eapi-config">
 		<set-variable value="#[payload]" doc:name="Init Payload" doc:id="2cbbf3d9-a54d-4b2f-b780-b19e6f9308e5" variableName="initPayload"/>
