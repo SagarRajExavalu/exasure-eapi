@@ -14,30 +14,7 @@
         <error-handler ref="apikit-errors" />
     </flow>
     <flow name="get:\address\autocomplete:exasure-eapi-config">
-        <!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
-&#45;&#45;-
-[
-  {
-    addressLabel: "334 E 25th St",
-    streetNumber: "334",
-    streetName: "E 25th St",
-    city: "Paterson",
-    stateCode: "NJ",
-    postalCode: "07514",
-    county: "Passaic",
-    countryCode: "US",
-    formattedAddress: "334 E 25th St, Paterson, NJ 07514 US",
-    state: "New Jersey",
-    country: "United States",
-    countryFlag: "🇺🇸"
-  }
-&#93; as Array {encoding: "UTF-8", mediaType: "application/json"}&#93;&#93;></ee:set-payload>
-            </ee:message>
-        </ee:transform> [STUDIO] -->
-        <ee:transform doc:name="Transform Message" doc:id="d6bbbfa7-5b2f-49a0-ad71-52a66da03726">
+        <ee:transform doc:name="Init Variables" doc:id="d6bbbfa7-5b2f-49a0-ad71-52a66da03726">
             <ee:message />
             <ee:variables>
                 <ee:set-variable variableName="mailable"><![CDATA[%dw 2.0
@@ -67,5 +44,40 @@ attributes.queryParams.countryCode]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="getAddressAutocompleteSubFlow" doc:id="46024be2-9897-4348-ba2a-e883ba3de979" name="getAddressAutocompleteSubFlow" />
+    </flow>
+    <flow name="get:\vin-details\(vin-number):exasure-eapi-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="vin-number">attributes.uriParams.'vin-number'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    bodyStyle: "SEDAN 4-DR",
+    engineDisplacement: "2.0L",
+    engineShape: "Inline",
+    engineType: "ELECTRIC",
+    fuelType: "ELECTRIC",
+    grossVehicleWeightRatingClass: "E",
+    make: "Tesla",
+    manufacturerCountry: "UNITED STATES",
+    model: "Model 3",
+    modelYear: "2024",
+    trimLevel: "Base",
+    VIN: "5YJ3E1EA9RF721552",
+    vehicleType: "MPV"
+  }
+] as Array {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\license\verification:application\json:exasure-eapi-config">
+		<set-variable value="#[payload]" doc:name="Init Payload" doc:id="2cbbf3d9-a54d-4b2f-b780-b19e6f9308e5" variableName="initPayload"/>
+		<flow-ref doc:name="postLicenseVerificationSubFlow" doc:id="2d3e2b2e-fd74-4817-a9b2-76308d0e6f14" name="postLicenseVerificationSubFlow"/>
     </flow>
 </mule>
