@@ -74,4 +74,30 @@ payload]]></ee:set-payload>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="720320c3-cfc8-4b81-a7d9-a58a6e75b180" message="postLicenseVerificationSubFlow ended for transactionId: #[correlationId]"/>
 	</sub-flow>
+	
+<sub-flow name="getVindetailsSubflow" doc:id="812d7eb0-6533-4e02-b5d3-4dce5529dd47" >
+			<logger level="INFO" doc:name="getVindetailsSubflowStarted" doc:id="90ac0889-b10f-40e4-8e28-540fff8da092" message="getVindetailsSubflowStarted"/>
+		<http:request method="GET" doc:name="GET Vindetails" doc:id="ea4011c2-8551-4ee8-bddc-bd1df2edd74c" url="${cloudhub.exasure-dmv-sapi.hostName}${cloudhub.exasure-dmv-sapi.path.getVindetails}" sendCorrelationId="AUTO" correlationId="#[correlationId]">
+			<reconnect frequency="${reconnection.frequecy}" count="${reconnection.attempts}" />
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('secure::exasure-dmv-sapi.client_secret'),
+	"client_id" : Mule::p('secure::exasure-dmv-sapi.client_id')
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[{
+	("vin-number" : vars.vVin)
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Response from Request connector" doc:id="09cd60fb-d906-46a7-8129-a58e8afc57f4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="getVindetailsSubflowEnded" doc:id="fa043ebb-6916-4b82-885d-a2b45fb115a4" message="getVindetailsSubflowEnded"/>
+	</sub-flow>
+ 
 </mule>
